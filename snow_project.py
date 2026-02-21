@@ -18,23 +18,15 @@ import osmnx as ox
 import geopandas as gpd
 import matplotlib.pyplot as plt
 
-# 1️⃣ 下载Charlottetown的可驾驶道路网络
 place_name = "Charlottetown, Prince Edward Island, Canada"
 
 G = ox.graph_from_place(
     place_name,
     network_type="drive"
 )
-
-# 2️⃣ 转换为GeoDataFrame
 nodes, edges = ox.graph_to_gdfs(G)
-
 print("Number of nodes:", len(nodes))
 print("Number of road segments:", len(edges))
 print(edges.head())
-
-# 3️⃣ 画图展示
 fig, ax = ox.plot_graph(G)
-
-# 4️⃣ 保存为shapefile给教授
 edges.to_file("charlottetown_roads.shp")
