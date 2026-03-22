@@ -1,54 +1,84 @@
 # Charlottetown Snow Removal Network Analysis
 
 **Author:** Xuanqi Cheng  
-**Project Type:** Work-integrated Research / Network Analysis  
+**Project Type:** Work-integrated Research / Urban Network Analysis  
+**Advisor:** Justin Kakeu  
 **Technologies:** Python, OSMnx, NetworkX, GeoPandas, Matplotlib, SciPy  
 
 ---
 
 ## Project Overview
-This project analyzes the road network of **Charlottetown, Prince Edward Island, Canada** with a focus on understanding network structure, identifying critical intersections, and assessing network resilience. The goal is to move from abstract network metrics to spatially intuitive visualizations that can inform decision-making for snow removal and urban planning.
+This project analyzes the road network of Charlottetown, Prince Edward Island, Canada using graph theory and spatial network analysis. The goal is to understand network structure, identify critical intersections, and evaluate network resilience under disruption scenarios. The results provide insights for snow removal prioritization and urban infrastructure planning.
 
 ---
 
-## Key Analyses
-1. **Network Extraction**
-   - Road network retrieved from OpenStreetMap using **OSMnx**.
-   - Converted to an undirected graph and extracted the **largest connected component** for analysis.
+## Key Findings
 
-2. **Network Metrics**
-   - **Degree**: Average and maximum node degree; visualized via a histogram.
-   - **Shortest Path**: Average shortest path length (weighted by road length).
-   - **Centrality Measures**:
-     - Betweenness centrality (top 5 nodes highlighted)
-     - Closeness centrality (top 5 nodes highlighted)
-   - **Spectral Properties**: Smallest Laplacian eigenvalues, optional Fiedler vector for cluster detection.
+- The network consists of **1,444 nodes** and **3,762 edges**.
+- The average degree is **2.918**, indicating a relatively sparse but well-connected urban structure.
+- The average shortest path length is **4,142 meters**, reflecting a compact city layout.
+- A small number of intersections carry a large proportion of shortest-path traffic based on betweenness centrality.
+- Key intersections are primarily located along major corridors such as:
+  - University Avenue  
+  - Belvedere Avenue  
+  - Mount Edward Road  
+  - St Peters Road  
+  - North River Road  
+- These intersections represent critical connectivity points within the network.
 
-3. **Network Resilience**
-   - Top 5 betweenness nodes removed to simulate network disruption.
-   - Size of the largest connected component monitored after node removal.
-   - Visualizations of network fragmentation by connected components.
+---
 
-4. **Visualizations**
-   - Node size proportional to degree.
-   - Node color representing centrality measures.
-   - Edge thickness proportional to importance.
-   - Critical nodes highlighted and network fragmentation shown.
-   - Optional Fiedler vector visualized for structural clusters.
+## Methodology
+
+### 1. Network Extraction
+- Road network retrieved from OpenStreetMap using **OSMnx**
+- Converted into a graph representation (intersections = nodes, roads = edges)
+- Analysis performed on the **largest connected component**
+
+### 2. Network Metrics
+- **Degree distribution**: measures local connectivity of intersections
+- **Shortest path analysis**: evaluates overall accessibility
+- **Betweenness centrality**: identifies critical routing intersections
+- **Closeness centrality**: measures accessibility from each node
+- **Spectral analysis**: Laplacian eigenvalues and algebraic connectivity
+
+### 3. Network Resilience
+- Top 5% highest betweenness nodes were removed
+- Impact measured using largest connected component size
+- Used to simulate disruption scenarios (e.g., blocked roads during snow events)
+
+---
+
+## Results Summary
+
+- Network size: 1,444 nodes / 3,762 edges  
+- Average shortest path length: 4,142 meters  
+- Maximum node degree: 5  
+- Algebraic connectivity: 0.001649  
+- After removal of critical nodes: largest component reduced from 1,444 to 1,438 nodes  
+
+---
+
+## Interpretation
+
+The Charlottetown road network is generally compact and efficient, with most areas accessible through short paths. However, connectivity is not uniformly distributed. A small number of high-centrality intersections act as structural bottlenecks, meaning that disruptions at these locations could disproportionately affect mobility.
+
+The resilience analysis shows that while global connectivity remains largely stable under targeted node removal, peripheral accessibility is more vulnerable. This highlights the importance of prioritizing key intersections in snow removal and maintenance strategies.
 
 ---
 
 ## Files
+
 | File | Description |
 |------|-------------|
-| `snow_project.py` | Main Python script for data extraction, network analysis, and visualization |
-| `charlottetown_roads.csv` | CSV export of the road network data |
+| `snow_project.py` | Main analysis script (network construction, metrics, visualization) |
+| `charlottetown_roads.csv` | Extracted road network data |
 | `README.md` | Project documentation |
-| `figures/` *(optional)* | Folder containing final visualizations/maps |
 
 ---
 
 ## How to Run
-1. Install required Python packages:
+
+Install dependencies:
 ```bash
 pip install osmnx networkx geopandas matplotlib scipy
