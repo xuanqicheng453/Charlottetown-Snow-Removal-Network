@@ -176,8 +176,16 @@ fig, ax = ox.plot_graph(
 )
 
 # 9.Print street names for top nodes (real-world reference)
-
-for u, v, data in G.edges(data=True):
-    if u in important_nodes or v in important_nodes:
+print("\nTop Betweenness Nodes with Street Names:\n")
+for node, value in top5_betw:
+    print(f"\nNode ID: {node}, Betweenness: {value:.6f}")
+    edges = G.edges(node, data=True)
+    street_names = set()
+    for u, v, data in edges:
         if 'name' in data:
-            print(data['name'])
+            if isinstance(data['name'], list):
+                street_names.update(data['name'])
+            else:
+                street_names.add(data['name'])
+    print("Connected streets:", street_names)
+
