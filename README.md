@@ -1,84 +1,101 @@
-# Charlottetown Snow Removal Network Analysis
+# Charlottetown Road Network Analysis
 
-**Author:** Xuanqi Cheng  
-**Project Type:** Work-integrated Research / Urban Network Analysis  
-**Advisor:** Justin Kakeu  
-**Technologies:** Python, OSMnx, NetworkX, GeoPandas, Matplotlib, SciPy  
+## Overview
 
----
+This project applies graph theory and network science methods to analyze the structural properties of the road network in Charlottetown, Prince Edward Island (Canada). The city’s urban form is compact and spatially constrained, making it an ideal case study for investigating how topology influences accessibility, connectivity, and network vulnerability.
 
-## Project Overview
-This project analyzes the road network of Charlottetown, Prince Edward Island, Canada using graph theory and spatial network analysis. The goal is to understand network structure, identify critical intersections, and evaluate network resilience under disruption scenarios. The results provide insights for snow removal prioritization and urban infrastructure planning.
+The road network is modeled as a weighted spatial graph, where intersections are nodes and road segments are edges. Using Python-based geospatial and network analysis tools, the study explores both local and global structural patterns in the urban system.
 
 ---
 
-## Key Findings
+## Research Objectives
 
-- The network consists of **1,444 nodes** and **3,762 edges**.
-- The average degree is **2.918**, indicating a relatively sparse but well-connected urban structure.
-- The average shortest path length is **4,142 meters**, reflecting a compact city layout.
-- A small number of intersections carry a large proportion of shortest-path traffic based on betweenness centrality.
-- Key intersections are primarily located along major corridors such as:
-  - University Avenue  
-  - Belvedere Avenue  
-  - Mount Edward Road  
-  - St Peters Road  
-  - North River Road  
-- These intersections represent critical connectivity points within the network.
+This project investigates the following:
+
+- How is the Charlottetown road network structurally organized?
+- Which intersections act as critical connectivity hubs?
+- How robust is the network under targeted disruptions?
+- How do spatial constraints influence accessibility and shortest-path structure?
 
 ---
 
 ## Methodology
 
-### 1. Network Extraction
-- Road network retrieved from OpenStreetMap using **OSMnx**
-- Converted into a graph representation (intersections = nodes, roads = edges)
-- Analysis performed on the **largest connected component**
+The analysis is implemented using Python and open geospatial data from OpenStreetMap.
 
-### 2. Network Metrics
-- **Degree distribution**: measures local connectivity of intersections
-- **Shortest path analysis**: evaluates overall accessibility
-- **Betweenness centrality**: identifies critical routing intersections
-- **Closeness centrality**: measures accessibility from each node
-- **Spectral analysis**: Laplacian eigenvalues and algebraic connectivity
+### Graph Construction
+- Tool: OSMnx
+- Representation: Weighted undirected graph G = (V, E)
+- Nodes: Road intersections
+- Edges: Road segments weighted by physical length
 
-### 3. Network Resilience
-- Top 5% highest betweenness nodes were removed
-- Impact measured using largest connected component size
-- Used to simulate disruption scenarios (e.g., blocked roads during snow events)
+### Network Analysis
+The following graph-theoretic measures are computed using NetworkX:
 
----
+- Degree distribution (local connectivity)
+- Shortest path length (accessibility)
+- Betweenness centrality (flow dependency / bottlenecks)
+- Closeness centrality (global accessibility)
+- Spectral analysis using Laplacian matrix (algebraic connectivity, Fiedler vector)
+- Network resilience under targeted node removal
 
-## Results Summary
-
-- Network size: 1,444 nodes / 3,762 edges  
-- Average shortest path length: 4,142 meters  
-- Maximum node degree: 5  
-- Algebraic connectivity: 0.001649  
-- After removal of critical nodes: largest component reduced from 1,444 to 1,438 nodes  
+Shortest path computations are performed using Dijkstra’s algorithm on weighted edges.
 
 ---
 
-## Interpretation
+## Key Findings
 
-The Charlottetown road network is generally compact and efficient, with most areas accessible through short paths. However, connectivity is not uniformly distributed. A small number of high-centrality intersections act as structural bottlenecks, meaning that disruptions at these locations could disproportionately affect mobility.
-
-The resilience analysis shows that while global connectivity remains largely stable under targeted node removal, peripheral accessibility is more vulnerable. This highlights the importance of prioritizing key intersections in snow removal and maintenance strategies.
-
----
-
-## Files
-
-| File | Description |
-|------|-------------|
-| `snow_project.py` | Main analysis script (network construction, metrics, visualization) |
-| `charlottetown_roads.csv` | Extracted road network data |
-| `README.md` | Project documentation |
+- The network exhibits a sparse but well-connected structure, with most intersections having degree 2–3.
+- High-betweenness nodes are concentrated along major arterial roads, indicating strong flow dependency on a limited number of intersections.
+- Closeness centrality is highest in the city center, reflecting a clear accessibility gradient from core to periphery.
+- Spectral analysis reveals moderate global connectivity with clear spatial clustering.
+- Targeted removal of high-betweenness nodes significantly increases fragmentation compared to random failures, highlighting heterogeneous robustness.
 
 ---
 
-## How to Run
+## Tools and Libraries
 
-Install dependencies:
-```bash
-pip install osmnx networkx geopandas matplotlib scipy
+- Python
+- OSMnx
+- NetworkX
+- NumPy
+- SciPy
+- Matplotlib
+
+---
+
+## Visualization Examples
+
+The project includes:
+
+- Road network graph visualization
+- Degree distribution histogram
+- Betweenness centrality heatmap
+- Closeness centrality spatial mapping
+- Fiedler vector clustering visualization
+- Network robustness simulation results
+
+---
+
+## Data Source
+
+- OpenStreetMap (OSM)
+
+---
+
+## Significance
+
+This project demonstrates how graph-theoretic and spectral methods can be used to analyze real-world urban infrastructure. The results highlight how spatial constraints and network topology jointly shape accessibility and vulnerability in small urban systems.
+
+Such methods are relevant for:
+- Urban planning
+- Transportation optimization
+- Infrastructure resilience analysis
+- Spatial data science applications
+
+---
+
+## Author
+
+Xuanqi Cheng  
+University of Prince Edward Island  
