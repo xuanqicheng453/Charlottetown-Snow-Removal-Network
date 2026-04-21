@@ -108,7 +108,12 @@
       <workItem from="1773415027303" duration="1406000" />
       <workItem from="1773932528453" duration="2000" />
       <workItem from="1774016313716" duration="730000" />
-      <workItem from="1774203386378" duration="417000" />
+      <workItem from="1774203386378" duration="1334000" />
+      <workItem from="1774205218849" duration="1874000" />
+      <workItem from="1774283542494" duration="21000" />
+      <workItem from="1776801115484" duration="6000" />
+      <workItem from="1776801144771" duration="45000" />
+      <workItem from="1776801300060" duration="2564000" />
     </task>
     <servers />
   </component>
@@ -116,7 +121,7 @@
     <option name="version" value="3" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/PythonProject17$snow_project.coverage" NAME="snow_project Coverage Results" MODIFIED="1774203415717" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/PythonProject17$snow_project.coverage" NAME="snow_project Coverage Results" MODIFIED="1776805705235" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/PythonProject17$main.coverage" NAME="main Coverage Results" MODIFIED="1771702803186" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>

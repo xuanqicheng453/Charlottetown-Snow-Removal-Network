@@ -3,189 +3,108 @@ import networkx as nx
 import matplotlib.pyplot as plt
 import numpy as np
 import scipy.sparse.linalg as spla
+import matplotlib.cm as cm
 
-# 1.Load road network for Charlottetown
+# 1. LOAD NETWORK
 place_name = "Charlottetown, Prince Edward Island, Canada"
 
-# Download road network (drivable streets)
 G = ox.graph_from_place(place_name, network_type="drive")
-print("Original graph:")
-print("Nodes:", len(G.nodes))
-print("Edges:", len(G.edges))
-
-# Quick plot of the full network
-ox.plot_graph(G, node_size=10, edge_color='gray')
-
-# Convert to undirected graph for network analysis
 G = ox.convert.to_undirected(G)
 
-# Extract the largest connected component
+# largest connected component
 largest_cc = max(nx.connected_components(G), key=len)
 G = G.subgraph(largest_cc).copy()
 
-print("Largest connected component:")
 print("Nodes:", len(G.nodes))
 print("Edges:", len(G.edges))
 
-# 2.Build adjacency matrices
-# Binary adjacency matrix (edges = 1)
-A_binary = nx.to_numpy_array(G, weight=None)
-print("Binary adjacency matrix shape:", A_binary.shape)
-
-# Weighted adjacency matrix (weight = road length)
-A_weighted = nx.to_numpy_array(G, weight="length")
-print("Weighted adjacency matrix shape:", A_weighted.shape)
-
-# 3. Compute basic node metrics
+# 2. BASIC METRICS
 degrees = dict(G.degree())
-avg_degree = sum(degrees.values()) / len(degrees)
+avg_degree = np.mean(list(degrees.values()))
 max_degree = max(degrees.values())
-print("Average degree:", round(avg_degree, 3))
-print("Maximum degree:", max_degree)
 
-# Plot degree distribution
-plt.hist(degrees.values(), bins=20, color='skyblue')
+print("Avg degree:", round(avg_degree, 3))
+print("Max degree:", max_degree)
+
+plt.figure()
+plt.hist(degrees.values(), bins=20)
 plt.title("Degree Distribution")
-plt.xlabel("Degree")
-plt.ylabel("Frequency")
 plt.show()
 
-# 4. Shortest path metric
-print("Computing average shortest path length...")
-avg_shortest_path = nx.average_shortest_path_length(G, weight="length")
-print("Average shortest path length:", round(avg_shortest_path, 3))
+# 3. SHORTEST PATH
+avg_sp = nx.average_shortest_path_length(G, weight="length")
+print("Average shortest path:", round(avg_sp, 2))
 
-# 5. Centrality measures
-# Betweenness centrality
-print("Computing betweenness centrality...")
+# 4. CENTRALITY
 betweenness = nx.betweenness_centrality(G, weight="length", normalized=True)
-top5_betw = sorted(betweenness.items(), key=lambda x: x[1], reverse=True)[:5]
-print("Top 5 betweenness nodes:", top5_betw)
-
-# Closeness centrality
-print("Computing closeness centrality...")
 closeness = nx.closeness_centrality(G, distance="length")
-top5_close = sorted(closeness.items(), key=lambda x: x[1], reverse=True)[:5]
-print("Top 5 closeness nodes:", top5_close)
 
-# 6. Laplacian eigenvalues (spectral properties)
-print("Computing smallest Laplacian eigenvalues...")
+top_betw = sorted(betweenness.items(), key=lambda x: x[1], reverse=True)[:5]
+print("\nTop Betweenness Nodes:")
+for n, v in top_betw:
+    print(n, v)
+
+# 5. SPECTRAL ANALYSIS
 L = nx.laplacian_matrix(G)
-# Compute 5 smallest eigenvalues
-eigenvalues = spla.eigsh(L, k=5, which="SM", return_eigenvectors=False)
-eigenvalues = sorted(eigenvalues)
-print("Smallest 5 eigenvalues:", eigenvalues)
+eigs = spla.eigsh(L, k=5, which="SM", return_eigenvectors=False)
+print("\nSmallest eigenvalues:", sorted(eigs))
 
-# 7. Network resilience analysis
+
+# 6. RESILIENCE TEST
 G_res = G.copy()
-# Remove top 5 betweenness nodes
-for node, _ in top5_betw:
-    G_res.remove_node(node)
+for n, _ in top_betw:
+    G_res.remove_node(n)
 
-largest_cc_after = max(nx.connected_components(G_res), key=len)
-print("Largest component size after removal:", len(largest_cc_after))
+largest_after = len(max(nx.connected_components(G_res), key=len))
+print("\nLargest component after attack:", largest_after)
 
-# 8.Visualizations for professor
 
-# 8a. Node size proportional to degree
-node_sizes = [degrees[n]*20 for n in G.nodes()]
-ox.plot_graph(G, node_size=node_sizes, node_color='blue', edge_color='gray', bgcolor='white')
 
-# 8b. Node color proportional to betweenness centrality using matplotlib colormap
-import matplotlib.cm as cm
+# 7. VISUALIZATION FUNCTIONS
+def plot_network(G, values, title, cmap="viridis"):
+    norm = plt.Normalize(min(values), max(values))
+    colors = plt.colormaps[cmap](norm(values))
+    fig, ax = ox.plot_graph(
+        G,
+        node_size=20,
+        node_color=colors,
+        edge_color="gray",
+        bgcolor="white"
+    )
+    plt.title(title)
 
-node_color = [betweenness[n] for n in G.nodes()]
-node_sizes = [20]*len(G.nodes())
 
-# Normalize values for the colormap
-norm = plt.Normalize(vmin=min(node_color), vmax=max(node_color))
-colors = cm.viridis(norm(node_color))  # maps numbers to colors
+# Betweenness map
+plot_network(G, list(betweenness.values()), "Betweenness Centrality")
 
-# Plot the network
-fig, ax = ox.plot_graph(
-    G,
-    node_size=node_sizes,
-    node_color=colors,
-    edge_color='gray',
-    bgcolor='white'
-)
+# =========================
+# 8. DEGREE vs BETWEENNESS
+# =========================
+deg_list = [degrees[n] for n in G.nodes()]
+bet_list = [betweenness[n] for n in G.nodes()]
 
-# 8c. Highlight top 5% betweenness nodes
-threshold = np.percentile(list(betweenness.values()), 95)
-important_nodes = [n for n, v in betweenness.items() if v >= threshold]
-colors = ['red' if n in important_nodes else 'blue' for n in G.nodes()]
-ox.plot_graph(G, node_size=20, node_color=colors, edge_color='gray', bgcolor='white')
+plt.figure()
+plt.scatter(deg_list, bet_list, alpha=0.5)
+plt.xlabel("Degree")
+plt.ylabel("Betweenness")
+plt.title("Degree vs Betweenness")
+plt.show()
 
-# 8d. Show fragmentation after removing top nodes
-G_removed = G.copy()
-G_removed.remove_nodes_from(important_nodes)
-components = list(nx.connected_components(G_removed))
-component_colors = {}
-for i, comp in enumerate(components):
-    for n in comp:
-        component_colors[n] = i
-node_colors = [component_colors.get(n, 0) for n in G_removed.nodes()]
-import matplotlib.cm as cm
+# =========================
+# 9. TOP NODES BAR CHART
+# =========================
+top15 = sorted(betweenness.items(), key=lambda x: x[1], reverse=True)[:15]
+labels = [str(x[0]) for x in top15]
+values = [x[1] for x in top15]
 
-# Map component IDs to colors using a colormap
-component_ids = [component_colors[n] for n in G_removed.nodes()]
-norm = plt.Normalize(vmin=min(component_ids), vmax=max(component_ids))
-colors = cm.tab20(norm(component_ids))
+plt.figure(figsize=(10, 4))
+plt.bar(labels, values)
+plt.xticks(rotation=90)
+plt.title("Top 15 Betweenness Nodes")
+plt.show()
 
-# Plot the fragmented network
-fig, ax = ox.plot_graph(
-    G_removed,
-    node_size=20,
-    node_color=colors,
-    edge_color='gray',
-    bgcolor='white'
-)
+# 10. FIEDLER VECTOR
+eigvals, eigvecs = spla.eigsh(L, k=2, which="SM", return_eigenvectors=True)
+fiedler = eigvecs[:, 1]
 
-# 8e. Optional: Fiedler vector (spectral clustering insight)
-fiedler_vector = spla.eigsh(L, k=2, which='SM', return_eigenvectors=True)[1][:,1]
-
-node_color_fiedler = fiedler_vector
-import matplotlib.cm as cm
-
-# Normalize Fiedler vector for coloring
-norm = plt.Normalize(vmin=min(fiedler_vector), vmax=max(fiedler_vector))
-colors = cm.plasma(norm(fiedler_vector))
-
-# Plot with mapped colors
-fig, ax = ox.plot_graph(
-    G,
-    node_size=20,
-    node_color=colors,
-    edge_color='gray',
-    bgcolor='white'
-)
-import matplotlib.cm as cm
-import matplotlib.pyplot as plt
-
-# Normalize Fiedler vector values
-norm = plt.Normalize(vmin=min(fiedler_vector), vmax=max(fiedler_vector))
-colors = cm.plasma(norm(fiedler_vector))  # map values to RGBA colors
-
-# Plot graph with mapped colors
-fig, ax = ox.plot_graph(
-    G,
-    node_size=20,
-    node_color=colors,
-    edge_color='gray',
-    bgcolor='white'
-)
-
-# 9.Print street names for top nodes (real-world reference)
-print("\nTop Betweenness Nodes with Street Names:\n")
-for node, value in top5_betw:
-    print(f"\nNode ID: {node}, Betweenness: {value:.6f}")
-    edges = G.edges(node, data=True)
-    street_names = set()
-    for u, v, data in edges:
-        if 'name' in data:
-            if isinstance(data['name'], list):
-                street_names.update(data['name'])
-            else:
-                street_names.add(data['name'])
-    print("Connected streets:", street_names)
-
+plot_network(G, fiedler, "Fiedler Vector (Spectral Partition)")
