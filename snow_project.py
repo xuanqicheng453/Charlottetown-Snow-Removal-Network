@@ -40,6 +40,7 @@ avg_sp = nx.average_shortest_path_length(G, weight="length")
 print("Average shortest path:", round(avg_sp, 2))
 
 # 4. CENTRALITY
+
 betweenness = nx.betweenness_centrality(G, weight="length", normalized=True)
 closeness = nx.closeness_centrality(G, distance="length")
 
