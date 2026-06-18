@@ -6,12 +6,14 @@ import scipy.sparse.linalg as spla
 import matplotlib.cm as cm
 
 # 1. LOAD NETWORK
+
 place_name = "Charlottetown, Prince Edward Island, Canada"
 
 G = ox.graph_from_place(place_name, network_type="drive")
 G = ox.convert.to_undirected(G)
 
 # largest connected component
+
 largest_cc = max(nx.connected_components(G), key=len)
 G = G.subgraph(largest_cc).copy()
 
@@ -19,6 +21,7 @@ print("Nodes:", len(G.nodes))
 print("Edges:", len(G.edges))
 
 # 2. BASIC METRICS
+
 degrees = dict(G.degree())
 avg_degree = np.mean(list(degrees.values()))
 max_degree = max(degrees.values())
@@ -32,6 +35,7 @@ plt.title("Degree Distribution")
 plt.show()
 
 # 3. SHORTEST PATH
+
 avg_sp = nx.average_shortest_path_length(G, weight="length")
 print("Average shortest path:", round(avg_sp, 2))
 
@@ -45,12 +49,14 @@ for n, v in top_betw:
     print(n, v)
 
 # 5. SPECTRAL ANALYSIS
+
 L = nx.laplacian_matrix(G)
 eigs = spla.eigsh(L, k=5, which="SM", return_eigenvectors=False)
 print("\nSmallest eigenvalues:", sorted(eigs))
 
 
 # 6. RESILIENCE TEST
+
 G_res = G.copy()
 for n, _ in top_betw:
     G_res.remove_node(n)
@@ -61,6 +67,7 @@ print("\nLargest component after attack:", largest_after)
 
 
 # 7. VISUALIZATION FUNCTIONS
+
 def plot_network(G, values, title, cmap="viridis"):
     norm = plt.Normalize(min(values), max(values))
     colors = plt.colormaps[cmap](norm(values))
@@ -77,9 +84,9 @@ def plot_network(G, values, title, cmap="viridis"):
 # Betweenness map
 plot_network(G, list(betweenness.values()), "Betweenness Centrality")
 
-# =========================
+
 # 8. DEGREE vs BETWEENNESS
-# =========================
+
 deg_list = [degrees[n] for n in G.nodes()]
 bet_list = [betweenness[n] for n in G.nodes()]
 
@@ -90,9 +97,9 @@ plt.ylabel("Betweenness")
 plt.title("Degree vs Betweenness")
 plt.show()
 
-# =========================
+
 # 9. TOP NODES BAR CHART
-# =========================
+
 top15 = sorted(betweenness.items(), key=lambda x: x[1], reverse=True)[:15]
 labels = [str(x[0]) for x in top15]
 values = [x[1] for x in top15]
@@ -104,6 +111,7 @@ plt.title("Top 15 Betweenness Nodes")
 plt.show()
 
 # 10. FIEDLER VECTOR
+
 eigvals, eigvecs = spla.eigsh(L, k=2, which="SM", return_eigenvectors=True)
 fiedler = eigvecs[:, 1]
 
